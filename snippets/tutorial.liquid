@@ -1,0 +1,353 @@
+{% comment %}
+
+{% liquid
+  assign liquidThing  = "1,2,3,4,5"
+
+  for number in liquidThing
+    echo {{number | replace: ",", "  "}} 
+  endfor
+%}
+
+
+{%  comment %}
+  Connected css file ith liquid
+{% endcomment %}
+
+{{ 'tutorial.css' | asset_url | stylesheet_tag }}
+
+{% comment %}
+    <p>Hello from tutorial.liquid</p>
+    {% assign myVariable = "Hello world!" %}
+    {{ myVariable }}
+{% endcomment %}
+
+
+
+{% comment %}   string    {% endcomment %}
+
+{% assign myString = "hello my boy 52 ngg!:)" %}
+{{ myString }}
+
+{% comment %}  number {% endcomment %}
+
+{% assign myNumber = 52 %}
+<br>
+{% assign myFloatNumber = 52.5 %}
+
+{{ myNumber }}, 
+<br>
+{{ myFloatNumber }}
+
+{% comment %}   Boolean    {% endcomment %}
+ <br>
+
+{% assign myBoolean = true %}
+
+{{ myBoolean }}
+
+<br>
+{% comment %}   Array    {% endcomment %}
+
+{{ product.tags.size }}
+
+{% for tag in product.tags %}
+    {{ tag }}
+    <br>
+{% endfor %}
+
+<br>
+
+{%  comment %}
+  Objects
+{% endcomment %}
+
+<p>{{ product.title }}</p>
+
+    {% capture html %}
+      <div>
+        <p>{{ product.title }}</p>
+      </div>
+    {% endcapture %}
+
+    {{ html }}
+
+    {% comment %}
+      Else If conditional
+    {% endcomment %}
+
+    {% assign myDog = 'Mudak' %}
+
+    {%  if myDog == 'Gector' %}
+        <p>This is  my dog</p>   
+
+    {% elsif myDog == 'Mudak' %}
+        <p>Your name is mudak but my dogs name Gector</p>
+    {% else %}
+        <p>It is not my dog</p>
+    {% endif %}
+    <br>
+
+    <p>{{ product.tags }}</p>
+
+    {%  if product.tags contains "Made to OrderShirt Tag" %}
+        <p>Fuck you </p>
+    {% endif %}
+
+<br>
+    {% if product.title contains "Example T-Shirt" and product.price < 10000 %}
+        <p>This is an Example T-Shirt and it costs less then 100uah</p>
+    {% endif %}
+
+    {% comment %}
+      We can also use 'or' instead of and 
+    {% endcomment %}
+
+<br>
+
+    {% unless product.title contains "dog" %}
+      <p>This title is not about dogs</p>
+    {% endunless %}
+
+<br>
+
+{% comment %}
+  CASE TAG
+  we can use blank if we want to  check 
+  if the string is empty or not
+{% endcomment %}
+
+{%  if product.title %}
+    {% case product.title %}
+    {% when  "Example T-Shirt"%}
+      <p>This an affordable t-shirt which costs {{ product.price }}</p>
+    {% when product.title == 'Example T-Shirt' %}
+          <p>This is an example of a t-shirt</p>
+    {% else %}
+      <p>Nothing has been found</p>
+  {% endcase %}
+{% endif %}
+
+{% comment %}
+  FORLOOP VARIABLES
+  imit: 2 offset: 2
+{% endcomment %}
+
+{% for product in collection.products %}
+  <p style="
+    {% if forloop.first %}
+     color: green
+     {% elsif forloop.last %}
+      color: red
+     {% endif %}
+      ">
+      {{forloop.index}} - {{ product.title }}
+      {% comment %}
+        Also there is a forloop.index0 \ the index stars with 0
+        we can set limit 
+        we can set offset it is the value form which everything will start
+      {% endcomment %}
+    </p>
+    {% if product.tags.size > 0 %}
+        <h2>Tags</h2>
+        <ul>
+            {% for tag in product.tags %}
+                <li>Product Index: {{forloop.parentloop.index}}|| Tag: {{ tag }}</li>
+
+                {% if tag == 'Original' %}
+                    {% break %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% else  %}
+    <p>This collection is empty</p>
+
+{% endfor %}
+
+{% comment %}
+  PAGINATE
+{% endcomment %}
+
+
+{% paginate collection.products by 3 %}
+  {% for product in collection.products %}
+    <p style="color: green;">{{ product.title }}</p>
+  {% endfor %}
+  {{ paginate | default_pagination }}
+{% endpaginate %}
+
+{% comment %}
+  FILTERS
+
+
+{% assign myNumberFilter = '1' %}
+{% assign myNewNumber = myNumberFilter | plus: 5 %}
+
+{% comment %}
+  Other arifmethic filters:
+  1 plus = +
+  2 minus = -
+  3 times = multiply
+  4 divided_by = divide
+{% endcomment %}
+
+{% if myNewNumber > 10 %}
+  <p>My number is greater then 10</p>
+{% endif %}
+
+{{ myNewNumberFilter }}
+
+{% assign myModuloNumber = myNewNumber | modulo: 2 %}
+
+{% if myModuloNumber == 0 %}
+  <p>Even</p>
+{% else %}
+    <p>Odd</p>
+{% endif %}
+
+{% assign myabsNumber = -11 | abs %}
+
+<p>{{ myabsNumber }}</p>
+
+{% assign myRoundNumber = 11.5 | round %}
+
+<p>{{ myRoundNumber }}</p>
+{% endcomment %}
+
+
+{% comment %}
+  STRING FILTERS
+
+
+{% assign myStringFilter = 'hello world' %}
+{% comment %}
+  Filters:
+  1 upcase
+  2 downcase
+  3 append: 'some extra text' it adds some extra text at the end of string
+  4 strip 'deleates all the sapce at the end of the string'
+  5 truncate 'cuts the string in chosn length ' 
+  | also truncatewrods 'same but with words'
+  | can put a string after this filter and 
+  it will end with it instead of three dots
+  if we cut a string with html we have to use strip-html
+  before truncate
+  new_line_to_br 'Every new line will be the same as its in string '
+  6 replace 'replaces chosen text with string that you write after it'
+  7 remove 'deleates chosen text everywhere
+    same with replace_last
+    and with replace_first
+  '
+{% endcomment %}
+
+<p> {{ myStringFilter }}    </p>
+
+
+{% assign myStringFilterStrip = "<p style='color: red'>Hello</p>" %}
+
+{{ myStringFilterStrip  | strip_html}}
+
+{%  assign myNumbers = "html|orange,css|blue,javascript|red" | split: ',' %}
+
+{% for language in myNumbers %}
+    {% assign languageName = language | split:'|' | first %}
+    {% assign languageColor = language | split: '|' | last %}
+  <p style="color: {{ languageColor }}">{{ languageName }}</p>
+{% endfor %}
+
+{% endcomment %}
+
+{% comment %}
+  ARRAY FILTERS
+  1 join 'joins in a common string and each item 
+  is divided with string that you write'
+  2 revers 'first item becomes the last'
+  3 first 'obvious'
+  4 last 'obvious'
+  5 size 'size of arr'
+  Can also use '.' with this filters above 
+  6 sum 'to summurize all '
+  7 where 'finds all variables which contains 
+  some specific info'
+  8 uniq 'deleats all repeated items in array'
+{% endcomment %}
+
+
+{% comment %}
+{% assign products = collection.products %}
+{% assign productsTitles = products %}
+
+{%  for productsTitle in productsTitles %}
+    <p>{{ productsTitle }}</p>
+{% endfor %}
+<p>{{ productsTitles | join: '///' }}</p>
+
+{% assign priceSortedProducts = products | sort: "price" %}
+{%  for product in priceSortedProducts %}
+  <p>{{ product.title }} - {{ product.price | money }}</p>
+{% endfor %}
+{% endcomment %}
+
+
+{% comment %}
+  JSON FILTER
+  1 json "gives all the data which is contained in this obj"
+  2 default 'if the object is empty or return false the text 
+  that you write will be displayed 
+  3 highlight "highlites the chosen word in string"
+  4 if we need current date we use date
+  the scepcific class for it is 
+  .swatch {
+    display: block !important;
+    ...
+}
+    5 color_lighten
+    6 color_darken 
+    in both of this cases we have to write 
+     the color in variable
+    7 color_mix if we have 2 colors 
+    in var. we can mix them with each other
+    and we can set there % of each color
+
+{% endcomment %}
+
+{{ collection.products.first | json }}
+
+
+<p>Copyrigth {{ 'now' | date: '%Y-%m-%d' }}</p>
+
+{% comment %}
+  Images Filters
+{{ 
+  collection.products.first.featured_image 
+  | image_url: width: 100, height: 100 
+  | image_tag }}
+
+  {{ "someimage.jpg"| asset_img_url: '300x300' }}
+{% endcomment %}
+
+
+
+
+<script src="{{ 'tutorial.js' | asset_url}}" defer></script>
+
+{% liquid
+  assign firstProduct  = collection.products.first
+%}
+
+<script>console.log("Here is the data of the first product:", {{ firstProduct | json }})</script>
+{% endcomment %}
+
+
+{% comment %}
+ Type of the documentation that i need to write in my snippets
+  
+  Accepts: 
+  -
+  -
+
+  Usage: 
+  -
+  -
+
+{% endcomment %}
